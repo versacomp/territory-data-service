@@ -1,3 +1,13 @@
 {
-  "presets": ["env"]
+  "presets": ["env"],
+  "plugins": [
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "@schema": "./schema",
+        "@resolvers": "./schema/resolvers",
+        "@types": "./schema/types"
+      }
+    }]
+  ]
 }
