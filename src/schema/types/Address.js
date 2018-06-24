@@ -1,5 +1,5 @@
 export const Address = `
-  type Address = {
+  type Address {
     id: Int!
     congregationId: Int!
     territoryId: Int
