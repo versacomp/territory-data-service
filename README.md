@@ -19,8 +19,8 @@ VPN connection to versacomputer.com
 Sample query:
 ```
 {
-	territories (congId: 1) {
-		name
+  territories (congId: 1) {
+    name
     type
   }
 }
