@@ -7,9 +7,10 @@ These instructions will get you a copy of the project up and running on your loc
 `git clone` this repository into your local machine
 
 ### Prerequisites
-Node 8.6+
-npm 5.6+
-VPN connection to versacomputer.com
+1. Node 8.6+
+2. npm 5.6+
+3. VPN connection to versacomputer.com
+4. process.env variables on the server
 
 ### Installing
 
