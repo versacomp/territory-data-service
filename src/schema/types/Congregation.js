@@ -31,9 +31,7 @@ export const resolvers = {
   congregations: async (root, args) => {
     try {
       const congAsync = new CongregationAsync();
-      
       if (args.keyword) {
-        console.log(args.keyword);
         return await congAsync.searchCongregations(keyword);
       }
 

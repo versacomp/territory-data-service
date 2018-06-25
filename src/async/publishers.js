@@ -1,7 +1,7 @@
 import { toArray } from 'lodash';
 import { conn } from './../../index';
 
-export  class PublisherAsync {
+class PublisherAsync {
   async getPublisherById (id) {
     return (await conn.query(`SELECT firstname, lastname, congregationid FROM publishers WHERE id=${id}`))[0];
   }
@@ -14,3 +14,5 @@ export  class PublisherAsync {
     return toArray(await conn.query(`SELECT firstname, lastname, congregationid FROM publishers WHERE firstname LIKE '%${keyword}%' OR lastname LIKE '%${keyword}%'`));
   }
 }
+
+export default new PublisherAsync();

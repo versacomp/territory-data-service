@@ -1,4 +1,6 @@
-import { PublisherAsync } from './../../async/publishers';
+import publisherAsync from './../../async/publishers';
+import congAsync from './../../async/congregations';
+import terrAsync from './../../async/territories';
 
 export const Publisher = `
   type Publisher {
@@ -7,19 +9,40 @@ export const Publisher = `
     firstname: String
     lastname: String
     congregation: Congregation
+    checkedOutTerritories: [Territory]
   }
 `;
 
 export const queries = `
-  publisher(firstname: String, lastname: String): Publisher
+  checkedOutTerritories(publisherId: Int): [Territory]
 `;
 
 export const resolvers = {
   publisher: async (root, args) => {
     try {
-      const publisherAsync = new PublisherAsync();
       const result = await publisherAsync.getPublisherByName(args.firstname, args.lastname);
       return result;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  },
+
+  congregation: async (root, args) => {
+    try {
+      return await congAsync.getCongregationById(root.congregationid);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  },
+
+  checkedOutTerritories: async (root, args) => {
+    try {
+      console.log('root.id:', root.id);
+      if (root.id) {
+        return await terrAsync.getCheckedOutTerritories(root.id);
+      }
     } catch (err) {
       console.error(err);
       throw err;

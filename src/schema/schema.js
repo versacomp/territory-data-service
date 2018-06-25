@@ -7,6 +7,7 @@ import { Publisher, queries as publisherQueries, resolvers as publisherResolvers
 
 const RootQuery = `
   type RootQuery {
+    publisher(firstname: String, lastname: String): Publisher
     ${publisherQueries}
     ${congregationQueries}
     ${territoryQueries}
@@ -22,18 +23,20 @@ const SchemaDefinition = `
 const resolvers = {
   RootQuery: merge (
     {}, 
-    {
-      publisher: publisherResolvers.publisher,
-    }
+    publisherResolvers,
+    congregationResolvers,
+    territoryResolvers,
   ),
   
-  Publisher: {
-    congregation: congregationResolvers.congregation
-  },
+  // Publisher: publisherResolvers,
 
   Congregation: {
     territories: territoryResolvers.territories,
   },
+
+  Territory: {
+    
+  }
 }
 
 export default makeExecutableSchema({

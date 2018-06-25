@@ -1,4 +1,4 @@
-import { TerritoryAsync } from './../../async/territories';
+import terrAsync from './../../async/territories';
 
 const aliases = `,
   congregationid as congregationId
@@ -23,7 +23,6 @@ export const queries = `
 export const resolvers = {
   territory: async (root, args) => {
     try {
-      const terrAsync = new TerritoryAsync();
       return await terrAsync.getTerritory(args.id);
     } catch (err) {
       console.error(err);
@@ -33,11 +32,8 @@ export const resolvers = {
 
   territories: async (root, args) => {
     try {
-      const terrAsync = new TerritoryAsync();
-      console.log(root);
-      console.log(args);
       let result;
-      if (args.congId || root.id) {
+      if ((args && args.congId) || (root && root.id)) {
         result = await terrAsync.getTerritories(args.congId || root.id);
       }
 
