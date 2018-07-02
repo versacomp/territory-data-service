@@ -34,7 +34,7 @@ conn.connect((err) => {
   console.log('Connected to Territory database');
 });
 
-const PORT = 4000;
+const PORT = process.env.TERRITORY_PORT | 4000;
 const app = express();
 
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
