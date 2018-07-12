@@ -13,6 +13,7 @@
  */
 
 import express from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import mysql from 'mysql';
 import { promisify } from 'util';
@@ -37,6 +38,7 @@ conn.connect((err) => {
 const PORT = process.env.TERRITORY_PORT | 4000;
 const app = express();
 
+app.use(cors());
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
