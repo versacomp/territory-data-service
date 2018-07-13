@@ -65,6 +65,11 @@ app.use(expressWinston.errorLogger({
   ]
 }));
 
+app.use(function (err, req, res, next) {
+  res.status(500);
+  process.exit();
+});
+
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

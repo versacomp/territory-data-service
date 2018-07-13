@@ -42,7 +42,7 @@ const resolvers = {
   },
 
   Address: {
-    
+    territory: territoryResolvers.territory
   },
 }
 

@@ -1,18 +1,20 @@
 import addressAsync from './../../async/addresses';
+import territoryAsync from './../../async/territories';
 
 export const Address = `
   type Address {
     id: Int!
     congregationId: Int!
-    territoryId: Int
+    territory_id: Int
     addr1: String
     addr2: String
-    city: String
+    city(name: String): String
     state: String
     postalCode: String
     phone: String
     longitude: Float
     latitude: Float
+    territory: Territory
   }
 `;
 

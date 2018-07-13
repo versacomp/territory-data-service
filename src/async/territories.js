@@ -17,6 +17,10 @@ class TerritoryAsync {
   async getCheckedOutTerritories (publisherId) {
     return toArray(await conn.query(`SELECT * FROM checked_out_territories WHERE publisherid=${publisherId}`));
   }
+
+  async getTerritoriesByCity (city) {
+    return toArray(await conn.query(`SELECT * FROM territories_by_city WHERE city='${city}'`));
+  }
 }
 
 export default new TerritoryAsync();
