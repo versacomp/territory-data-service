@@ -44,7 +44,7 @@ const PORT = process.env.TERRITORY_PORT | 4000;
 const app = express();
 
 app.use(cors());
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, tracing: true, cacheControl: true }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 app.use(expressWinston.logger({
