@@ -26,7 +26,6 @@ export const resolvers = {
       return await terrAsync.getTerritory(args.id);
     } catch (err) {
       console.error(err);
-      throw err;
     }
   },
 
@@ -45,7 +44,6 @@ export const resolvers = {
 
     } catch (err) {
       console.error(err);
-      throw err;
     }
   },
 };

@@ -33,8 +33,11 @@ export const conn = mysql.createConnection({
 conn.query = promisify(conn.query);
 
 conn.connect((err) => {
-  if (err) throw err;
-  console.log('Connected to Territory database');
+  if (err) {
+    console.error('Unable to connect to database');
+  } else {
+    console.log('Connected to Territory database');
+  }
 });
 
 const PORT = process.env.TERRITORY_PORT | 4000;

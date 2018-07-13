@@ -24,7 +24,6 @@ export const resolvers = {
       return result;
     } catch (err) {
       console.error(err);
-      throw err;
     }
   },
 
@@ -33,7 +32,6 @@ export const resolvers = {
       return await congAsync.getCongregationById(root.congregationid);
     } catch (err) {
       console.error(err);
-      throw err;
     }
   },
 
@@ -45,7 +43,6 @@ export const resolvers = {
       }
     } catch (err) {
       console.error(err);
-      throw err;
     }
   },
 };

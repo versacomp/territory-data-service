@@ -25,7 +25,6 @@ export const resolvers = {
       return await congAsync.getCongregationById(congId);
     } catch (err) {
       console.error(err);
-      throw err;
     }
   },
   congregations: async (root, args) => {
@@ -39,7 +38,6 @@ export const resolvers = {
 
     } catch (err) {
       console.error(err);
-      throw err;
     }
   },
 };
