@@ -14,6 +14,8 @@
 
 import express from 'express';
 import cors from 'cors';
+import winston from 'winston';
+import expressWinston from 'express-winston';
 import bodyParser from 'body-parser';
 import mysql from 'mysql';
 import { promisify } from 'util';
@@ -41,6 +43,25 @@ const app = express();
 app.use(cors());
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+
+app.use(expressWinston.logger({
+  transports: [
+    new winston.transports.Console({
+      json: true,
+      colorize: true
+    })
+  ]
+}));
+
+app.use(expressWinston.errorLogger({
+  transports: [
+    new winston.transports.Console({
+      json: true,
+      colorize: true
+    })
+  ]
+}));
+
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
