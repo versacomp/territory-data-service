@@ -37,7 +37,6 @@ export const resolvers = {
 
   checkedOutTerritories: async (root, args) => {
     try {
-      console.log('root.id:', root.id);
       if (root.id) {
         return await terrAsync.getCheckedOutTerritories(root.id);
       }

@@ -65,7 +65,7 @@ app.use(expressWinston.errorLogger({
   ]
 }));
 
-app.use(function (err, req, res, next) {
+app.on('uncaughtException', function (err) {
   res.status(500);
   process.exit();
 });
