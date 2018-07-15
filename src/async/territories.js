@@ -29,7 +29,7 @@ class TerritoryAsync {
   }
 
   async getTerritoriesByGroupCode (congId, groupCode) {
-    return toArray(await conn.query(`SELECT * FROM territories WHERE congregationid=${congId} AND group_code='${groupCode}'`));
+    return toArray(await conn.query(`SELECT * FROM territories_by_city WHERE congregationid=${congId} AND group_code='${groupCode}'`));
   }
 }
 
