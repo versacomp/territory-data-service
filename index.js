@@ -47,29 +47,43 @@ app.use(cors());
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, tracing: true, cacheControl: true }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
-app.use(expressWinston.logger({
-  transports: [
-    new winston.transports.Console({
-      json: true,
-      colorize: true
-    })
-  ]
-}));
+// app.use(expressWinston.logger({
+//   transports: [
+//     new winston.transports.Console({
+//       json: true,
+//       colorize: true
+//     })
+//   ]
+// }));
 
-app.use(expressWinston.errorLogger({
-  transports: [
-    new winston.transports.Console({
-      json: true,
-      colorize: true
-    })
-  ]
-}));
+// app.use(expressWinston.errorLogger({
+//   transports: [
+//     new winston.transports.Console({
+//       json: true,
+//       colorize: true
+//     })
+//   ]
+// }));
 
-app.on('uncaughtException', function (err) {
+
+function errorHandler (err, req, res, next) {
+  if (res.headersSent) {
+    return next(err);
+  }
   res.status(500);
-  process.exit();
-});
+  res.render('error', { error: err });
+}
 
+function clientErrorHandler (err, req, res, next) {
+  if (req.xhr) {
+    res.status(500).send({ error: 'Something failed!' });
+  } else {
+    next(err);
+  }
+}
+
+app.use(errorHandler);
+app.use(clientErrorHandler);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
