@@ -47,25 +47,6 @@ app.use(cors());
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, tracing: true, cacheControl: true }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
-// app.use(expressWinston.logger({
-//   transports: [
-//     new winston.transports.Console({
-//       json: true,
-//       colorize: true
-//     })
-//   ]
-// }));
-
-// app.use(expressWinston.errorLogger({
-//   transports: [
-//     new winston.transports.Console({
-//       json: true,
-//       colorize: true
-//     })
-//   ]
-// }));
-
-
 function errorHandler (err, req, res, next) {
   if (res.headersSent) {
     return next(err);

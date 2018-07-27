@@ -15,6 +15,7 @@ export const Address = `
     longitude: Float
     latitude: Float
     territory: Territory
+    notes: String
   }
 `;
 
