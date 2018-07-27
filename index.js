@@ -14,8 +14,6 @@
 
 import express from 'express';
 import cors from 'cors';
-import winston from 'winston';
-import expressWinston from 'express-winston';
 import bodyParser from 'body-parser';
 import mysql from 'mysql';
 import { promisify } from 'util';
