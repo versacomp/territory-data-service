@@ -79,8 +79,6 @@ export const resolvers = {
 
   status: async(root, args) => {
     try {
-      console.log('root', root);
-      console.log('args', args);
       if (root && root.congregationid && root.id) {
         let activity = await terrAsync.getTerritoryStatus(root.congregationid, root.id);
         if (activity) {
