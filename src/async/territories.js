@@ -3,7 +3,7 @@ import { conn } from './../../index';
 
 class TerritoryAsync {
   async getTerritory (id) {
-    return (await conn.query(`SELECT * FROM territories WHERE id=${id}`))[0];
+    return toArray(await conn.query(`SELECT * FROM territories WHERE id=${id}`))[0];
   }
 
   async getTerritories (congId) {
@@ -14,8 +14,14 @@ class TerritoryAsync {
     return toArray(await conn.query(`SELECT * FROM territories WHERE congregationid=${congId} name LIKE '%${keyword}%' OR description LIKE '%${keyword}%'`));
   }
 
-  async getCheckedOutTerritories (congId, publisherId) {
-    return toArray(await conn.query(`SELECT * FROM checked_out_territories WHERE congregationid=${congId} publisherid=${publisherId}`));
+  async getTerritoryStatus (congId, territoryId, publisherId) {
+    return toArray(await conn.query(
+      `
+        SELECT * FROM territorycheckouts ck JOIN territories t ON ck.territoryid = t.id WHERE t.congregationid=${congId}
+        ${!!territoryId ? ` AND ck.territoryid=${territoryId}` : ''}
+        ${!!publisherId ? ` AND ck.publisherid=${publisherId}` : ''}
+      `
+    ));
   }
 
   async getTerritoriesByCity (congId, city) {

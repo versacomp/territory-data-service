@@ -39,6 +39,7 @@ const resolvers = {
 
   Territory: {
     addresses: addressResolvers.addresses,
+    status: territoryResolvers.status,
   },
 
   Address: {
