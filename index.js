@@ -42,27 +42,8 @@ const PORT = process.env.TERRITORY_PORT || 4000;
 const app = express();
 
 app.use(cors());
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, tracing: true, cacheControl: true }));
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, cacheControl: true }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
-
-function errorHandler (err, req, res, next) {
-  if (res.headersSent) {
-    return next(err);
-  }
-  res.status(500);
-  res.render('error', { error: err });
-}
-
-function clientErrorHandler (err, req, res, next) {
-  if (req.xhr) {
-    res.status(500).send({ error: 'Something failed!' });
-  } else {
-    next(err);
-  }
-}
-
-app.use(errorHandler);
-app.use(clientErrorHandler);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

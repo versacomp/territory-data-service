@@ -27,7 +27,12 @@ export const queries = `
   status(territoryId: Int): String
 `;
 
-export const resolvers = {
+export const mutations = `
+  checkoutTerritory(territoryId: Int!, publisherId: Int!, user: String): Territory
+  checkinTerritory(territoryId: Int!, publisherId: Int!, user: String): Territory
+`;
+
+export const queryResolvers = {
   territory: async (root, args) => {
     try {
       let result;
@@ -115,5 +120,16 @@ export const resolvers = {
     } catch (err) {
       console.error(err);
     }
+  },
+};
+
+export const mutationResolvers = {
+  checkoutTerritory: async (root, { territoryId, publisherId, user }) => {
+    await terrAsync.saveTerritoryActivity('OUT', territoryId, publisherId, user);
+    await terrAsync.getTerritory(territoryId);
+  },
+  checkinTerritory: async (root, { territoryId, publisherId, user }) => {
+    terrAsync.saveTerritoryActivity('IN', territoryId, publisherId, user);
+    await terrAsync.getTerritory(territoryId);
   },
 };

@@ -37,6 +37,14 @@ class TerritoryAsync {
   async getTerritoriesByGroupCode (congId, groupCode) {
     return toArray(await conn.query(`SELECT * FROM territories_by_city WHERE congregationid=${congId} AND group_code='${groupCode}' ORDER BY city, name`));
   }
+
+  async saveTerritoryActivity(status, territoryId, publisherId, user) {
+    if (user) {
+      await conn.query(`INSERT INTO territorycheckouts (territoryid, publisherid, status, create_user) VALUES (${territoryId}, ${publisherId}, '${status}', '${user}')`);    
+    } else {
+      await conn.query(`INSERT INTO territorycheckouts (territoryid, publisherid, status) VALUES (${territoryId}, ${publisherId}, '${status}')`);    
+    }
+  }
 }
 
 export default new TerritoryAsync();
