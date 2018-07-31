@@ -9,7 +9,7 @@ import {
   queryResolvers as territoryQueryResolvers, 
   mutationResolvers as territoryMutationResolvers 
 } from './types/Territory';
-import { Publisher, queries as publisherQueries, resolvers as publisherResolvers } from './types/Publisher';
+import { Publisher, queries as publisherQueries, queryResolvers as publisherQueryResolvers } from './types/Publisher';
 
 
 const RootQuery = `
@@ -39,7 +39,7 @@ const SchemaDefinition = `
 const resolvers = {
   RootQuery: merge (
     {}, 
-    publisherResolvers,
+    publisherQueryResolvers,
     congregationResolvers,
     territoryQueryResolvers,
     addressResolvers
@@ -50,10 +50,13 @@ const resolvers = {
     checkinTerritory: territoryMutationResolvers.checkinTerritory
   },
 
-  // Publisher: publisherResolvers,
+  // Publisher: {
+  //   territories: territoryQueryResolvers.territories
+  // },
 
   Congregation: {
     territories: territoryQueryResolvers.territories,
+    publishers: publisherQueryResolvers.publishers
   },
 
   Territory: {
