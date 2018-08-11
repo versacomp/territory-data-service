@@ -19,6 +19,13 @@ import mysql from 'mysql';
 import { promisify } from 'util';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import schema from './src/schema/schema';
+import http from 'http';
+import https from 'https';
+import fs from 'fs';
+
+const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_FILE, 'utf8');
+const certificate = fs.readFileSync(process.env.CERTIFICATE_FILE, 'utf8');
+const credentials = {key: privateKey, cert: certificate};
 
 export const conn = mysql.createConnection({
   ssl: { rejectUnauthorized: false }, // TODO: add SSL certificate file here (see https://github.com/mysqljs/mysql#ssl-options)
@@ -39,12 +46,25 @@ conn.connect((err) => {
 });
 
 const PORT = process.env.TERRITORY_PORT || 4000;
+const PORT_SSL = process.env.TERRITORY_PORT_TLS || 4443;
 const app = express();
 
 app.use(cors());
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, cacheControl: true }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
+
+/*
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
+});
+*/
+
+httpServer.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
+httpsServer.listen(PORT_SSL, () => {
+  console.log(`Listening on port ${PORT_SSL}`);
 });
