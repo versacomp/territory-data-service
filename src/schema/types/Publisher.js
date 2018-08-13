@@ -16,15 +16,23 @@ export const Publisher = `
 `;
 
 export const queries = `
+  user(username: String): Publisher
   publishers(congId: Int, keyword: String): [Publisher]
   checkedOutTerritories(publisherId: Int): [Territory]
 `;
 
 export const queryResolvers = {
+  user: async (root, args) => {
+    try {
+      return await publisherAsync.getUser(args.username);
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
   publisher: async (root, args) => {
     try {
-      const result = await publisherAsync.getPublisherByName(args.firstname, args.lastname);
-      return result;
+      return await publisherAsync.getPublisherByName(args.firstname, args.lastname);
     } catch (err) {
       console.error(err);
     }
