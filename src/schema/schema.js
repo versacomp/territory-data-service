@@ -14,6 +14,7 @@ import { Publisher, queries as publisherQueries, queryResolvers as publisherQuer
 
 const RootQuery = `
   type RootQuery {
+    user(username: String): Publisher
     publisher(firstname: String, lastname: String): Publisher
     ${publisherQueries}
     ${congregationQueries}
@@ -50,9 +51,9 @@ const resolvers = {
     checkinTerritory: territoryMutationResolvers.checkinTerritory
   },
 
-  // Publisher: {
-  //   territories: territoryQueryResolvers.territories
-  // },
+  Publisher: {
+    congregation: congregationResolvers.congregation,
+  },
 
   Congregation: {
     territories: territoryQueryResolvers.territories,
