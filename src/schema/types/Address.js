@@ -9,8 +9,8 @@ export const Address = `
     addr1: String
     addr2: String
     city(name: String): String
-    state: String
-    postalCode: String
+    state_province: String
+    postal_code: String
     phone: String
     longitude: Float
     latitude: Float
