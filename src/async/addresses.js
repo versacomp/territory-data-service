@@ -10,8 +10,12 @@ class AddressAsync {
     return toArray(await conn.query(`SELECT * FROM addresses WHERE territory_id=${terrId}`));
   }
 
-  async searchAddresses (keyword) {
-    return toArray(await conn.query(`SELECT * FROM addresses WHERE addr1 LIKE '%${keyword}%' OR addr2 LIKE '%${keyword}%' OR addr3 LIKE '%${keyword}%'`));
+  async searchAddresses (congId, keyword) {
+    return toArray(await conn.query(`SELECT * FROM addresses WHERE congregationid=${congId} AND addr1 LIKE '%${keyword}%' OR addr2 LIKE '%${keyword}%'`));
+  }
+
+  async getDNC (congId) {
+    return toArray(await conn.query(`SELECT * FROM addresses WHERE congregationid=${congId} AND notes LIKE '%DO NOT CALL%'`));
   }
 }
 
