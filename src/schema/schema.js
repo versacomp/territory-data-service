@@ -10,6 +10,7 @@ import {
   mutationResolvers as territoryMutationResolvers 
 } from './types/Territory';
 import { Publisher, queries as publisherQueries, queryResolvers as publisherQueryResolvers } from './types/Publisher';
+import { Status } from './types/Status';
 
 
 const RootQuery = `
@@ -79,6 +80,7 @@ export default makeExecutableSchema({
     Territory,
     Publisher,
     Address,
+    Status,
   ],
   resolvers
 });
