@@ -84,12 +84,9 @@ export const queryResolvers = {
   },
 
   status: async(root, args) => {
-    console.log('root', root);
-    console.log('args', args);
     try {
       if (root && root.congregationid && root.id) {
         let activity = await terrAsync.getTerritoryStatus(root.congregationid, root.id);
-        console.log('activity', activity);
         if (activity) {
           // no checkout records found: AVAILABLE
           if (!isArray(activity) || activity.length == 0) {
