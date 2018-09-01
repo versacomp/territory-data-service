@@ -1,6 +1,6 @@
 import { toArray } from 'lodash';
 import { conn } from './../../../index';
-import { CongregationAsync } from '../../async/congregations';
+import congAsync from '../../async/congregations';
 
 export const Congregation = `
   type Congregation {
@@ -20,7 +20,6 @@ export const queries = `
 export const resolvers = {
   congregation: async (root, args) => {
     try {
-      const congAsync = new CongregationAsync();
       const congId = args.id || root.congregationid;
       return await congAsync.getCongregationById(congId);
     } catch (err) {
@@ -29,7 +28,6 @@ export const resolvers = {
   },
   congregations: async (root, args) => {
     try {
-      const congAsync = new CongregationAsync();
       if (args.keyword) {
         return await congAsync.searchCongregations(keyword);
       }
@@ -39,5 +37,5 @@ export const resolvers = {
     } catch (err) {
       console.error(err);
     }
-  },
+  }
 };

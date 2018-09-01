@@ -9,18 +9,20 @@ export const Address = `
     addr1: String
     addr2: String
     city(name: String): String
-    state: String
-    postalCode: String
+    state_province: String
+    postal_code: String
     phone: String
     longitude: Float
     latitude: Float
     territory: Territory
+    notes: String
   }
 `;
 
 export const queries = `
   address(id: Int): Address
-  addresses(terrId: Int, keyword: String): [Address]
+  addresses(congId: Int, terrId: Int, keyword: String): [Address]
+  dnc(congId: Int, keyword: String): [Address]
 `;
 
 export const resolvers = {
@@ -39,12 +41,24 @@ export const resolvers = {
         result = await addressAsync.getAddressesByTerritory(args.terrId || root.id);
       }
 
-      if (args.keyword) {
-        result = await addressAsync.searchAddresses(args.keyword);
+      if (((root && root.congregationid) || args.congId) && args.keyword) {
+        const congId = (root ? root.congregationid : null) || args.congId;
+        result = await addressAsync.searchAddresses(congId);
       }
 
       return result;
 
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  dnc: async (root, args) => {
+    try {
+      let result;
+      const congId = (root ? root.congregationid : null) || args.congId;
+      result = await addressAsync.getDNC(congId, args.keyword);
+      return result;
     } catch (err) {
       console.error(err);
     }

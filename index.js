@@ -14,13 +14,20 @@
 
 import express from 'express';
 import cors from 'cors';
-import winston from 'winston';
-import expressWinston from 'express-winston';
 import bodyParser from 'body-parser';
 import mysql from 'mysql';
 import { promisify } from 'util';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import schema from './src/schema/schema';
+import http from 'http';
+import https from 'https';
+import fs from 'fs';
+
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const PORT = process.env.TERRITORY_PORT || 4000;
+const PORT_SSL = process.env.TERRITORY_PORT_TLS || 4443;
+
+const app = express();
 
 export const conn = mysql.createConnection({
   ssl: { rejectUnauthorized: false }, // TODO: add SSL certificate file here (see https://github.com/mysqljs/mysql#ssl-options)
@@ -40,51 +47,28 @@ conn.connect((err) => {
   }
 });
 
-const PORT = process.env.TERRITORY_PORT | 4000;
-const app = express();
-
 app.use(cors());
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, tracing: true, cacheControl: true }));
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, cacheControl: true }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
-// app.use(expressWinston.logger({
-//   transports: [
-//     new winston.transports.Console({
-//       json: true,
-//       colorize: true
-//     })
-//   ]
-// }));
+if (NODE_ENV === 'production') {
+  const PRIVATE_KEY_FILE = process.env.PRIVATE_KEY_FILE || '';
+  const CERT_FILE = process.env.CERTIFICATE_FILE || '';
+  const PRIVATE_KEY = fs.readFileSync(PRIVATE_KEY_FILE, 'utf8');
+  const CERT = fs.readFileSync(CERT_FILE, 'utf8');
+  const CREDENTIALS = {key: PRIVATE_KEY, cert: CERT};
 
-// app.use(expressWinston.errorLogger({
-//   transports: [
-//     new winston.transports.Console({
-//       json: true,
-//       colorize: true
-//     })
-//   ]
-// }));
+  const httpServer = http.createServer(app);
+  const httpsServer = https.createServer(CREDENTIALS, app);
 
-
-function errorHandler (err, req, res, next) {
-  if (res.headersSent) {
-    return next(err);
-  }
-  res.status(500);
-  res.render('error', { error: err });
+  httpServer.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+  });
+  httpsServer.listen(PORT_SSL, () => {
+    console.log(`Listening on port ${PORT_SSL}`);
+  });
+} else {
+  app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+  });
 }
-
-function clientErrorHandler (err, req, res, next) {
-  if (req.xhr) {
-    res.status(500).send({ error: 'Something failed!' });
-  } else {
-    next(err);
-  }
-}
-
-app.use(errorHandler);
-app.use(clientErrorHandler);
-
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
-});

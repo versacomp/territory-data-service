@@ -2,12 +2,20 @@ import { makeExecutableSchema } from 'graphql-tools';
 import { merge } from 'lodash';
 import { Address, queries as addressQueries, resolvers as addressResolvers } from './types/Address';
 import { Congregation, queries as congregationQueries, resolvers as congregationResolvers } from './types/Congregation';
-import { Territory, queries as territoryQueries, resolvers as territoryResolvers } from './types/Territory';
-import { Publisher, queries as publisherQueries, resolvers as publisherResolvers } from './types/Publisher';
+import { 
+  Territory, 
+  queries as territoryQueries, 
+  mutations as territoryMutations, 
+  queryResolvers as territoryQueryResolvers, 
+  mutationResolvers as territoryMutationResolvers 
+} from './types/Territory';
+import { Publisher, queries as publisherQueries, queryResolvers as publisherQueryResolvers } from './types/Publisher';
+import { Status } from './types/Status';
 
 
 const RootQuery = `
   type RootQuery {
+    user(username: String): Publisher
     publisher(firstname: String, lastname: String): Publisher
     ${publisherQueries}
     ${congregationQueries}
@@ -16,33 +24,50 @@ const RootQuery = `
   }
 `;
 
+const Mutation = `
+  type Mutation {
+    ${territoryMutations}
+  }
+`;
+
+
 const SchemaDefinition = `
   schema {
     query: RootQuery
+    mutation: Mutation
   }
 `;
 
 const resolvers = {
   RootQuery: merge (
     {}, 
-    publisherResolvers,
+    publisherQueryResolvers,
     congregationResolvers,
-    territoryResolvers,
+    territoryQueryResolvers,
     addressResolvers
   ),
-  
-  // Publisher: publisherResolvers,
+
+  Mutation: {
+    checkoutTerritory: territoryMutationResolvers.checkoutTerritory,
+    checkinTerritory: territoryMutationResolvers.checkinTerritory
+  },
+
+  Publisher: {
+    congregation: congregationResolvers.congregation,
+  },
 
   Congregation: {
-    territories: territoryResolvers.territories,
+    territories: territoryQueryResolvers.territories,
+    publishers: publisherQueryResolvers.publishers
   },
 
   Territory: {
     addresses: addressResolvers.addresses,
+    status: territoryQueryResolvers.status,
   },
 
   Address: {
-    territory: territoryResolvers.territory
+    territory: territoryQueryResolvers.territory
   },
 }
 
@@ -50,10 +75,12 @@ export default makeExecutableSchema({
   typeDefs: [
     SchemaDefinition,
     RootQuery,
+    Mutation,
     Congregation,
     Territory,
     Publisher,
     Address,
+    Status,
   ],
   resolvers
 });

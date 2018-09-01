@@ -8,28 +8,51 @@ export const Publisher = `
     congregationid: Int!
     firstname: String
     lastname: String
+    username: String
     congregation: Congregation
+    status: String
     checkedOutTerritories: [Territory]
+    role: String
+    role_description: String
   }
 `;
 
 export const queries = `
+  publishers(congId: Int, keyword: String): [Publisher]
   checkedOutTerritories(publisherId: Int): [Territory]
 `;
 
-export const resolvers = {
-  publisher: async (root, args) => {
+export const queryResolvers = {
+  user: async (root, args) => {
     try {
-      const result = await publisherAsync.getPublisherByName(args.firstname, args.lastname);
-      return result;
+      return await publisherAsync.getUser(args.username);
     } catch (err) {
       console.error(err);
     }
   },
 
-  congregation: async (root, args) => {
+  publisher: async (root, args) => {
     try {
-      return await congAsync.getCongregationById(root.congregationid);
+      if (args.publisherId) {
+        return await publisherAsync.getPublisherById(args.publisherId);
+      }
+      else if (args.firstname && args.lastname) {
+        return await publisherAsync.getPublisherByName(args.firstname, args.lastname);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  publishers: async (root, args) => {
+    try {
+      const id = root ? root.id : (args ? args.congId : undefined);
+      if (!id) {
+        throw new Error('Congregation Id is required to query for publishers');
+      }
+      
+      const result = await publisherAsync.searchPublishers(id, args.keyword);
+      return result;
     } catch (err) {
       console.error(err);
     }
