@@ -58,6 +58,9 @@ conn.getConnection(function gotConnection(err, connection) {
   console.log('FixieSocks Pass: ' + fixieValues[1]);
   console.log('FixieSocks Host: ' + fixieValues[2]);
   console.log('FixieSocks Port: ' + fixieValues[3]);
+  console.log('Territory Server: ' + process.env.TERRITORY_SERVER);
+  console.log('DB user: ' + process.env.TERRITORY_USERID);
+  console.log('DB pass: ' + process.env.TERRITORY_PASSWORD);
 
   if (err) {
     console.error('Unable to get connection to database');
