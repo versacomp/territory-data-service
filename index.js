@@ -19,13 +19,8 @@ import mysql from 'mysql';
 import { promisify } from 'util';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import schema from './src/schema/schema';
-import http from 'http';
-import https from 'https';
-import fs from 'fs';
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = process.env.TERRITORY_PORT || 4000;
-const PORT_SSL = process.env.TERRITORY_PORT_TLS || 4443;
 
 const app = express();
 
@@ -51,24 +46,6 @@ app.use(cors());
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, cacheControl: true }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
-if (NODE_ENV === 'production') {
-  const PRIVATE_KEY_FILE = process.env.PRIVATE_KEY_FILE || '';
-  const CERT_FILE = process.env.CERTIFICATE_FILE || '';
-  const PRIVATE_KEY = fs.readFileSync(PRIVATE_KEY_FILE, 'utf8');
-  const CERT = fs.readFileSync(CERT_FILE, 'utf8');
-  const CREDENTIALS = {key: PRIVATE_KEY, cert: CERT};
-
-  const httpServer = http.createServer(app);
-  const httpsServer = https.createServer(CREDENTIALS, app);
-
-  httpServer.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-  });
-  httpsServer.listen(PORT_SSL, () => {
-    console.log(`Listening on port ${PORT_SSL}`);
-  });
-} else {
-  app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
