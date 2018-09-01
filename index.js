@@ -52,12 +52,12 @@ export const conn = mysql.createPool({
   }
 });
 
-conn.query = promisify(conn.query);
+//conn.query = promisify(conn.query);
 
 conn.getConnection(function gotConnection(err, connection) {
 
   if (err) {
-    console.error('Unable to connect to database');
+    console.error('Unable get connection to database');
     throw err;
   } 
 
