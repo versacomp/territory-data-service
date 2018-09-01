@@ -52,8 +52,6 @@ export const conn = mysql.createPool({
   }
 });
 
-//conn.query = promisify(conn.query);
-
 conn.getConnection(function gotConnection(err, connection) {
 
   if (err) {
@@ -78,6 +76,8 @@ function queryVersion(connection) {
       process.exit();
   });
 }
+
+conn.query = promisify(conn.query);
 
 app.use(cors());
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, cacheControl: true }));
