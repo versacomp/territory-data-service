@@ -21,7 +21,7 @@ import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import schema from './src/schema/schema';
 import SocksConnection from 'socksjs';
 
-const PORT = process.env.TERRITORY_PORT || 4000;
+const PORT = process.env.PORT || 4000;
 
 const app = express();
 
