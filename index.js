@@ -45,7 +45,11 @@ export const conn = mysql.createPool({
   user: process.env.TERRITORY_USERID,
   password: process.env.TERRITORY_PASSWORD,
   database: db,
-  stream: fixieConnection
+  stream: fixieConnection,
+  ssl  : {
+    // TODO: Setup ca crt
+    rejectUnauthorized: false
+  }
 });
 
 conn.query = promisify(conn.query);
