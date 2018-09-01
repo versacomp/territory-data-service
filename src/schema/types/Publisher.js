@@ -33,7 +33,12 @@ export const queryResolvers = {
 
   publisher: async (root, args) => {
     try {
-      return await publisherAsync.getPublisherByName(args.firstname, args.lastname);
+      if (args.publisherId) {
+        return await publisherAsync.getPublisherById(args.publisherId);
+      }
+      else if (args.firstname && args.lastname) {
+        return await publisherAsync.getPublisherByName(args.firstname, args.lastname);
+      }
     } catch (err) {
       console.error(err);
     }

@@ -15,6 +15,11 @@ class PublisherAsync {
       WHERE firstname='${firstName}' AND lastname='${lastName}'`))[0];
   }
 
+  async getPublisherById (publisherId) {
+    return (await conn.query(`SELECT id, firstname, lastname, congregationid, username, status FROM publishers
+      WHERE id=${publisherId}`))[0];
+  }
+
   async searchPublishers (congId, keyword) {
     const kw = keyword || '';
     const sql = `SELECT id, firstname, lastname, congregationid, username, status FROM publishers
