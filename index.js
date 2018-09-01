@@ -15,32 +15,65 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import mysql from 'mysql';
+import mysql from 'mysql2';
 import { promisify } from 'util';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import schema from './src/schema/schema';
+import SocksConnection from 'socksjs';
 
 const PORT = process.env.TERRITORY_PORT || 4000;
 
 const app = express();
 
-export const conn = mysql.createConnection({
-  ssl: { rejectUnauthorized: false }, // TODO: add SSL certificate file here (see https://github.com/mysqljs/mysql#ssl-options)
+const fixieUrl = process.env.FIXIE_SOCKS_HOST;
+const fixieValues = fixieUrl.split(new RegExp('[/(:\\/@)/]+'));
+const db = 'territory';
+
+const mysqlServer = {
   host: process.env.TERRITORY_SERVER,
+  port: 3306
+};
+
+const fixieConnection = new SocksConnection(mysqlServer, {
+  user: fixieValues[0],
+  pass: fixieValues[1],
+  host: fixieValues[2],
+  port: fixieValues[3],
+});
+
+export const conn = mysql.createPool({
   user: process.env.TERRITORY_USERID,
   password: process.env.TERRITORY_PASSWORD,
-  database: 'territory'
+  database: db,
+  stream: fixieConnection
 });
 
 conn.query = promisify(conn.query);
 
-conn.connect((err) => {
+conn.getConnection(function gotConnection(err, connection) {
+
   if (err) {
     console.error('Unable to connect to database');
-  } else {
-    console.log('Connected to Territory database');
-  }
+    throw err;
+  } 
+
+  queryVersion(connection);
 });
+
+function queryVersion(connection) {
+  connection.query('SELECT version();', function (err, rows, fields) {
+
+      if (err) {
+        console.error('Unable to connect to database');
+        throw err;
+      }
+
+      console.log('Connected to Territory database');
+      console.log('MySQL/MariaDB version: ', rows);
+      connection.release();
+      process.exit();
+  });
+}
 
 app.use(cors());
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, cacheControl: true }));
