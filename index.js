@@ -54,7 +54,10 @@ export const conn = mysql.createPool({
 
 conn.getConnection(function gotConnection(err, connection) {
 
+  console.log('FixieSocks User: ' + fixieValues[0]);
+  console.log('FixieSocks Pass: ' + fixieValues[1]);
   console.log('FixieSocks Host: ' + fixieValues[2]);
+  console.log('FixieSocks Port: ' + fixieValues[3]);
 
   if (err) {
     console.error('Unable to get connection to database');
