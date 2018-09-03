@@ -13,17 +13,17 @@
  */
 
 import express from 'express';
+import cluster from 'cluster';
+import os from 'os';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import mysql from 'mysql2';
+import mysql from 'mysql';
 import { promisify } from 'util';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import schema from './src/schema/schema';
 import SocksConnection from 'socksjs';
 
 const PORT = process.env.PORT || 4000;
-
-const app = express();
 
 const fixieUrl = process.env.FIXIE_SOCKS_HOST;
 const fixieValues = fixieUrl.split(new RegExp('[/(:\\/@)/]+'));
@@ -81,12 +81,34 @@ function queryVersion(connection) {
   });
 }
 
-conn.query = promisify(conn.query);
+if (cluster.isMaster) {
+  const numWorkers = os.cpus().length;
+  console.log(`Master cluster setting up ${numWorkers} workers...`);
 
-app.use(cors());
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, cacheControl: true }));
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+  for (let i = 0; i < numWorkers; i++) {
+    cluster.fork();
+  }
 
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
-});
+  cluster.on('online', (worker) => {
+    console.log(`Worker ${worker.process.pid} is online`);
+  });
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died with code: ${code}, and signal: ${signal}`);
+    console.log('Starting a new worker');
+    cluster.fork();
+  });
+
+} else { 
+  const app = express();
+
+  conn.query = promisify(conn.query);
+
+  app.use(cors());
+  app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, cacheControl: true }));
+  app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+
+  app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+  });
+}
